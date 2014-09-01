@@ -96,7 +96,7 @@ def main():
     for message in messages:
         try:
             dbmsg.insert(message)
-            db.save()
+            dbmsg.save()
         except pymongo.errors.DuplicateKeyError, err:
             print err
             failed.append((message['msg_id'], err.message))
