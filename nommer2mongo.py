@@ -17,15 +17,7 @@ import logging
 import requests
 import json
 
-import fedmsg.config
 import pymongo
-
-try:
-    # Python2.7 and later
-    from logging.config import dictConfig
-except ImportError:
-    # For Python2.6, we rely on a third party module.
-    from logutils.dictconfig import dictConfig
 
 
 log = logging.getLogger("nommer2mongo")
@@ -44,7 +36,6 @@ def __get_messages(datagrepper_url, msg_id=None):
             'meta': ['usernames', 'packages'],
         }
 
-        print 'querying %s' % datagrepper_url + 'raw/'
         response = requests.get(datagrepper_url + 'raw/', params=param)
         return json.loads(response.text)
 
@@ -88,16 +79,7 @@ def parse_args():
 def main():
     opts = parse_args()
 
-    config = fedmsg.config.load_config()
-    config.update({
-        'name': 'relay_inbound',
-        'active': True,
-    })
-
-    dictConfig(config.get('logging', {'version': 1}))
     log.info("Starting loading mongodb")
-
-    fedmsg.init(**config)
 
     session = pymongo.MongoClient('localhost', 27017)
 
