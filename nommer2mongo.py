@@ -17,6 +17,7 @@ import logging
 import requests
 import json
 
+import bson.errors
 import pymongo
 import pymongo.errors
 
@@ -96,6 +97,9 @@ def main():
             dbmsg.insert(message)
         except pymongo.errors.DuplicateKeyError, err:
             print err
+        except bson.errors.InvalidDocument, err:
+            print err
+            print 'message: %s' % message['msg_id']
         cnt += 1
     print '%s messages processed' % cnt
 
