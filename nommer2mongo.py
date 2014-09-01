@@ -83,11 +83,12 @@ def main():
 
     session = pymongo.MongoClient('localhost', 27017)
     db = session.fedmsg
+    dbmsg = db.messages
 
     datagrepper_url = 'https://apps.fedoraproject.org/datagrepper/'
     messages = __get_messages(datagrepper_url, opts.msg_id)
     for message in messages:
-        db.insert(message)
+        dbmsg.insert(message)
 
 if __name__ == '__main__':
     main()
