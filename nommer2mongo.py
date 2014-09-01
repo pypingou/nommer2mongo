@@ -94,9 +94,9 @@ def main():
     messages = __get_messages(datagrepper_url, opts.msg_id)
     failed = []
     for message in messages:
+
         try:
             dbmsg.insert(message)
-            dbmsg.save()
         except pymongo.errors.DuplicateKeyError, err:
             print err
             failed.append((message['msg_id'], err.message))
@@ -104,6 +104,10 @@ def main():
             print err
             print 'message: %s' % message['msg_id']
             failed.append((message['msg_id'], err.message))
+
+        if (cnt % 100) == 0
+            dmsg.save()
+
         cnt += 1
     print '%s messages processed' % cnt
     print '%s messages failed' % len(failed)
