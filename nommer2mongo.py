@@ -61,7 +61,6 @@ def __get_messages(datagrepper_url, msg_id=None):
             data = _load_page(page)
             for message in data['raw_messages']:
                 yield message
-            break
 
 
 def parse_args():
