@@ -83,6 +83,9 @@ def main():
     session = pymongo.MongoClient('localhost', 27017)
     db = session.fedmsg
     dbmsg = db.messages
+    dbmsg.ensure_index(
+        [("msg_id", pymongo.ASCENDING)],
+        unique=True, background=True)
 
     datagrepper_url = 'https://apps.fedoraproject.org/datagrepper/'
     messages = __get_messages(datagrepper_url, opts.msg_id)
