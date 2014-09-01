@@ -98,18 +98,18 @@ def main():
             dbmsg.insert(message)
         except pymongo.errors.DuplicateKeyError, err:
             print err
-            failed.append(message['msg_id'])
+            failed.append((message['msg_id'], err.message))
         except bson.errors.InvalidDocument, err:
             print err
             print 'message: %s' % message['msg_id']
-            failed.append(message['msg_id'])
+            failed.append((message['msg_id'], err.message))
         cnt += 1
     print '%s messages processed' % cnt
     print '%s messages failed' % len(failed)
 
     with open('failed_messages', 'w') as stream:
         for msgid in failed:
-            stream.write(msgid + '\n')
+            stream.write(' '.join(msgid) + '\n')
 
 
 if __name__ == '__main__':
