@@ -82,6 +82,7 @@ def main():
     log.info("Starting loading mongodb")
 
     session = pymongo.MongoClient('localhost', 27017)
+    db = session.fedmsg
 
     datagrepper_url = 'https://apps.fedoraproject.org/datagrepper/'
     messages = __get_messages(datagrepper_url, opts.msg_id)
