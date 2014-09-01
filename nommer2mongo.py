@@ -18,6 +18,7 @@ import requests
 import json
 
 import pymongo
+import pymongo.errors
 
 
 log = logging.getLogger("nommer2mongo")
@@ -91,7 +92,10 @@ def main():
     cnt = 0
     messages = __get_messages(datagrepper_url, opts.msg_id)
     for message in messages:
-        dbmsg.insert(message)
+        try:
+            dbmsg.insert(message)
+        except pymongo.errors.DuplicateKeyError, err:
+            print err
         cnt += 1
     print '%s messages processed' % cnt
 
