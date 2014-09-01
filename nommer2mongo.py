@@ -88,9 +88,12 @@ def main():
         unique=True, background=True)
 
     datagrepper_url = 'https://apps.fedoraproject.org/datagrepper/'
+    cnt = 0
     messages = __get_messages(datagrepper_url, opts.msg_id)
     for message in messages:
         dbmsg.insert(message)
+        cnt += 1
+    print '%s messages processed' % cnt
 
 if __name__ == '__main__':
     main()
