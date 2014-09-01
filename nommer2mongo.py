@@ -105,9 +105,6 @@ def main():
             print 'message: %s' % message['msg_id']
             failed.append((message['msg_id'], err.message))
 
-        if (cnt % 100) == 0
-            dmsg.save()
-
         cnt += 1
     print '%s messages processed' % cnt
     print '%s messages failed' % len(failed)
