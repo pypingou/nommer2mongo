@@ -28,7 +28,7 @@ log = logging.getLogger("nommer2mongo")
 def __get_messages(datagrepper_url, msg_id=None):
     """ Retrieves messages from datagrepper. """
 
-    rows_per_page = 20
+    rows_per_page = 100
 
     def _load_page(page):
         param = {
@@ -96,6 +96,7 @@ def main():
     for message in messages:
         try:
             dbmsg.insert(message)
+            db.save()
         except pymongo.errors.DuplicateKeyError, err:
             print err
             failed.append((message['msg_id'], err.message))
