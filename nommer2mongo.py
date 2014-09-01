@@ -92,16 +92,25 @@ def main():
     datagrepper_url = 'https://apps.fedoraproject.org/datagrepper/'
     cnt = 0
     messages = __get_messages(datagrepper_url, opts.msg_id)
+    failed = []
     for message in messages:
         try:
             dbmsg.insert(message)
         except pymongo.errors.DuplicateKeyError, err:
             print err
+            failed.append(message['msg_id'])
         except bson.errors.InvalidDocument, err:
             print err
             print 'message: %s' % message['msg_id']
+            failed.append(message['msg_id'])
         cnt += 1
     print '%s messages processed' % cnt
+    print '%s messages failed' % len(failed)
+
+    with open('failed_messages', 'w') as stream:
+        for msgid in failed:
+            stream.write(msgid + '\n')
+
 
 if __name__ == '__main__':
     main()
