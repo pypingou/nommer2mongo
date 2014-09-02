@@ -23,6 +23,8 @@ import pymongo.errors
 
 
 log = logging.getLogger("nommer2mongo")
+logging.basicConfig()
+log.setLevel(logging.INFO)
 
 
 def __insert_messages(dbmsg):
@@ -45,11 +47,11 @@ def __insert_messages(dbmsg):
     failed = []
 
     # Make an initial query just to get the number of pages
+    log.info('Requesting the first page to get the total number of pages')
     data = _load_page(page=1)
     pages = data['pages']
 
     for page in range(1, pages+1):
-        print '%s / %s' % ( page, pages + 1)
         log.info("Requesting page %i of %i from datagrepper" %
                  (page, pages))
         data = _load_page(page)
