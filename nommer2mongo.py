@@ -56,6 +56,10 @@ def __insert_messages(dbmsg):
                  (page, pages))
         data = _load_page(page)
         for message in data['raw_messages']:
+            message['users'] = message['meta']['usernames']
+            message['packages'] = message['meta']['packages']
+            del(message['meta'])
+
             try:
                 dbmsg.insert(message)
             except pymongo.errors.DuplicateKeyError, err:
