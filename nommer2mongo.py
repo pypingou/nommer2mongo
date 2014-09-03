@@ -54,7 +54,11 @@ def __insert_messages(dbmsg):
     for page in range(1, pages+1):
         log.info("Requesting page %i of %i from datagrepper" %
                  (page, pages))
-        data = _load_page(page)
+        try:
+            data = _load_page(page)
+        except ValueError:
+            page = page -1
+            continue
         for message in data['raw_messages']:
             message['users'] = message['meta']['usernames']
             message['packages'] = message['meta']['packages']
