@@ -38,6 +38,7 @@ def __insert_messages(dbmsg):
             'page': page,
             'rows_per_page': rows_per_page,
             'meta': ['usernames', 'packages'],
+            'order': 'asc',
         }
 
         response = requests.get(datagrepper_url + 'raw/', params=param)
