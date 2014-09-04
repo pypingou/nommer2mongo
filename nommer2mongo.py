@@ -13,9 +13,11 @@ into MongoDB.
 """
 
 import argparse
+import datetime
 import logging
 import requests
 import json
+import uuid
 
 import bson.errors
 import pymongo
@@ -64,6 +66,10 @@ def __insert_messages(dbmsg):
             message['users'] = message['meta']['usernames']
             message['packages'] = message['meta']['packages']
             del(message['meta'])
+
+            if not message['msg_id']:
+                date = datetime.datetime.utcfromtimestamp(message['timestamp'])
+                message['msg_id'] = str(date.year) + '-' + str(uuid.uuid4())
 
             try:
                 dbmsg.insert(message)
