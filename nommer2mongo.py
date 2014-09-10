@@ -23,6 +23,10 @@ import bson.errors
 import pymongo
 import pymongo.errors
 
+import fedmsg
+import fedmsg.meta
+config = fedmsg.config.load_config()
+fedmsg.meta.make_processors(**config)
 
 log = logging.getLogger("nommer2mongo")
 logging.basicConfig()
@@ -39,7 +43,7 @@ def __insert_messages(dbmsg):
         param = {
             'page': page,
             'rows_per_page': rows_per_page,
-            'meta': ['usernames', 'packages'],
+            #'meta': ['usernames', 'packages'],
             'order': 'asc',
         }
 
@@ -63,9 +67,11 @@ def __insert_messages(dbmsg):
             page = page -1
             continue
         for message in data['raw_messages']:
-            message['users'] = message['meta']['usernames']
-            message['packages'] = message['meta']['packages']
-            del(message['meta'])
+
+            message['users'] = fedmsg.meta.msg2usernames(message)
+            message['packages'] = fedmsg.meta.msg2packages(message)
+            if 'meta' in message:
+                del(message['meta'])
 
             if not message['msg_id']:
                 date = datetime.datetime.utcfromtimestamp(message['timestamp'])
