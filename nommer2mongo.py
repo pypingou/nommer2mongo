@@ -68,8 +68,10 @@ def __insert_messages(dbmsg):
             continue
         for message in data['raw_messages']:
 
-            message['users'] = fedmsg.meta.msg2usernames(message)
-            message['packages'] = fedmsg.meta.msg2packages(message)
+            message['users'] = list(
+                fedmsg.meta.msg2usernames(message))
+            message['packages'] = list(
+                fedmsg.meta.msg2packages(message))
             if 'meta' in message:
                 del(message['meta'])
 
