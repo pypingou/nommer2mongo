@@ -59,12 +59,12 @@ def __insert_messages(dbmsg):
         datanommer.models.Message
     ).order_by(
         datanommer.models.Message.timestamp.asc()
-    ).limit(
-        LIMIT
     )
 
     total = query.count()
     total_page = int(ceil(total / float(LIMIT)))
+
+    query = query.limit(LIMIT)
 
     log.info("%s messages to process", total)
 
