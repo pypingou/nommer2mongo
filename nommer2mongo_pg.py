@@ -82,7 +82,7 @@ def __insert_messages(dbmsg):
                 del(message['meta'])
 
             if not message['msg_id']:
-                date = datetime.datetime.utcfromtimestamp(message['timestamp'])
+                date = message['timestamp']
                 message['msg_id'] = str(date.year) + '-' + str(uuid.uuid4())
 
             try:
