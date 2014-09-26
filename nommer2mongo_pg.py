@@ -53,15 +53,18 @@ def __insert_messages(dbmsg):
 
     SESSION.configure(bind=engine)
 
-    cnt = 0
-    failed = []
-
     query = SESSION.query(
         datanommer.models.Message
     ).order_by(
         datanommer.models.Message.timestamp.asc()
     )
 
+    total = query.count()
+
+    log.info("%s messages to process", total)
+
+    cnt = 0
+    failed = []
     for msg in query.all():
         message = msg.__json__()
         message['users'] = list(
