@@ -27,6 +27,8 @@ import fedmsg.meta
 
 import datanommer.models
 
+from math import ceil
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import (
     sessionmaker,
@@ -41,7 +43,7 @@ logging.basicConfig()
 log.setLevel(logging.INFO)
 
 URL = 'postgres://user:pass@localhost/db_name'
-
+LIMIT = 1000
 
 SESSION = scoped_session(sessionmaker())
 
@@ -57,37 +59,42 @@ def __insert_messages(dbmsg):
         datanommer.models.Message
     ).order_by(
         datanommer.models.Message.timestamp.asc()
+    ).limit(
+        LIMIT
     )
 
     total = query.count()
+    total_page = int(ceil(total / float(LIMIT)))
 
     log.info("%s messages to process", total)
 
     cnt = 0
     failed = []
-    for msg in query.all():
-        message = msg.__json__()
-        message['users'] = list(
-            fedmsg.meta.msg2usernames(message))
-        message['packages'] = list(
-            fedmsg.meta.msg2packages(message))
-        if 'meta' in message:
-            del(message['meta'])
+    for page in range(total_page + 1):
+        for msg in query.offset(page * LIMIT).all():
+            log.info('%s/%s', cnt, total)
+            message = msg.__json__()
+            message['users'] = list(
+                fedmsg.meta.msg2usernames(message))
+            message['packages'] = list(
+                fedmsg.meta.msg2packages(message))
+            if 'meta' in message:
+                del(message['meta'])
 
-        if not message['msg_id']:
-            date = datetime.datetime.utcfromtimestamp(message['timestamp'])
-            message['msg_id'] = str(date.year) + '-' + str(uuid.uuid4())
+            if not message['msg_id']:
+                date = datetime.datetime.utcfromtimestamp(message['timestamp'])
+                message['msg_id'] = str(date.year) + '-' + str(uuid.uuid4())
 
-        try:
-            dbmsg.insert(message)
-        except pymongo.errors.DuplicateKeyError, err:
-            print err
-            failed.append((message['msg_id'], err.message))
-        except bson.errors.InvalidDocument, err:
-            print 'message: %s' % message['msg_id']
-            print err
-            failed.append((message['msg_id'], err.message))
-        cnt += 1
+            try:
+                dbmsg.insert(message)
+            except pymongo.errors.DuplicateKeyError, err:
+                print err
+                failed.append((message['msg_id'], err.message))
+            except bson.errors.InvalidDocument, err:
+                print 'message: %s' % message['msg_id']
+                print err
+                failed.append((message['msg_id'], err.message))
+            cnt += 1
 
     print '%s messages processed' % cnt
     print '%s messages failed' % len(failed)
