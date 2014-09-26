@@ -71,8 +71,8 @@ def __insert_messages(dbmsg):
     cnt = 0
     failed = []
     for page in range(total_page + 1):
+        log.info('page %s/%s', page, total_page +1)
         for msg in query.offset(page * LIMIT).all():
-            log.info('%s/%s', cnt, total)
             message = msg.__json__()
             message['users'] = list(
                 fedmsg.meta.msg2usernames(message))
